@@ -1,5 +1,9 @@
-const config = require("./config.json");
+const fs = require("fs");
 const child_process = require("child_process");
+
+const config = JSON.parse(
+	fs.readFileSync("/home/container/config.json", "utf-8")
+);
 
 const processes = [];
 
