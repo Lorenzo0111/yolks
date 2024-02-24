@@ -10,4 +10,4 @@ python --version
 node --version
 
 # Load the script
-node /home/container/runner.js
+node /runner.js
