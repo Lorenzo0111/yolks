@@ -1,5 +1,6 @@
 const fs = require("fs");
 const child_process = require("child_process");
+const { promisify } = require("util");
 
 const config = JSON.parse(
 	fs.readFileSync("/home/container/config.json", "utf-8")
@@ -7,12 +8,28 @@ const config = JSON.parse(
 
 const processes = [];
 
-for (const runner of config.bots) {
-	const ps = child_process.spawn(runner.cmd, [runner.file], {
-		cwd: runner.dir,
-		stdio: "inherit",
-	});
-	processes.push(ps);
+async function main() {
+	console.log("Starting all the bots...");
+	for (const runner of config.bots) {
+		console.log("Loading bot " + runner.name);
+		if (runner.install) {
+			console.log("Installing dependencies for " + runner.name);
+			const install = child_process.spawn(runner.install, [], {
+				cwd: runner.dir,
+				stdio: "inherit",
+			});
+
+			await promisify(install.on).bind(install)("exit");
+			console.log("Installed dependencies for " + runner.name);
+		}
+
+		console.log("Starting " + runner.name);
+		const ps = child_process.spawn(runner.cmd, [runner.file], {
+			cwd: runner.dir,
+			stdio: "inherit",
+		});
+		processes.push(ps);
+	}
 }
 
 process.on("SIGINT", () => {
@@ -21,3 +38,5 @@ process.on("SIGINT", () => {
 	}
 	process.exit(0);
 });
+
+main().catch(console.error);
