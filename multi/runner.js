@@ -15,7 +15,7 @@ async function main() {
 		if (runner.install) {
 			console.log("Installing dependencies for " + runner.name);
 			const split = runner.install.split(" ");
-			const install = child_process.spawn(split, split.slice(1), {
+			const install = child_process.spawn(split[0], split.slice(1), {
 				cwd: runner.dir,
 				stdio: "inherit",
 			});
