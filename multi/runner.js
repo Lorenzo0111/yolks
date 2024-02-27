@@ -14,7 +14,8 @@ async function main() {
 		console.log("Loading bot " + runner.name);
 		if (runner.install) {
 			console.log("Installing dependencies for " + runner.name);
-			const install = child_process.spawn(runner.install, [], {
+			const split = runner.install.split(" ");
+			const install = child_process.spawn(split, split.slice(1), {
 				cwd: runner.dir,
 				stdio: "inherit",
 			});
